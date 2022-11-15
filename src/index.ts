@@ -41,17 +41,17 @@ export const testPuppeteerCase = async (
 
   await browser.close();
 
-  const versionDetails: Pick<ExecutionDetails, "puppeteerVersion" | "chromeVersion"> = {
+  const commonDetails: Omit<ExecutionDetails, "retryNumber"> = {
+    functionName: testCaseFunction.name,
+    casePath,
     puppeteerVersion,
     chromeVersion,
   };
 
   for (const retryNumber of new Array(options.retriesNumber).fill(null).map((_, index) => ++index)) {
     const details: ExecutionDetails = {
-      functionName: testCaseFunction.name,
       retryNumber,
-      casePath,
-      ...versionDetails,
+      ...commonDetails,
     };
 
     const performanceObserver = new PerformanceObserver((list) => {
