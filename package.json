@@ -9,6 +9,8 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "make-puppeteer-placeholder": "node ./build/helpers/make-puppeteer-placeholder.js",
+    "postinstall": "npm run build && npm run make-puppeteer-placeholder",
     "prepare": "npx simple-git-hooks",
     "watch": "ts-node-dev --transpile-only"
   },
