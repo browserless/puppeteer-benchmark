@@ -61,7 +61,7 @@ export const testPuppeteerCase = async (
     await testCaseFunction();
     performance.mark(`execution-finish`);
 
-    performance.measure("execution", "execution-start", "execution-finish");
+    performance.measure("total", "execution-start", "execution-finish");
 
     // We need to wait for observer callback to be completed before disconnecting
     await new Promise((resolve) => {
