@@ -23,12 +23,17 @@ export interface TestCasePerformanceResultItem {
   item: PerformanceEntry;
 }
 
+const _requireUncached = (module: string) => {
+  delete require.cache[require.resolve(module)];
+  return require(module);
+};
+
 export const testPuppeteerCase = async (
   casePath: string,
   options: TestOptions,
 ): Promise<TestCasePerformanceResultItem[]> => {
   const testCase = path.resolve(casePath);
-  const testCaseFunction = require(testCase);
+  const testCaseFunction = _requireUncached(testCase);
 
   const measures: TestCasePerformanceResultItem[] = [];
 

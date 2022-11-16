@@ -3,10 +3,9 @@ const path = require("path");
 const { performance } = require("perf_hooks");
 
 const puppeteer = require("puppeteer");
-const info = require("puppeteer/package.json");
+const puppeteerVersion = require("puppeteer/package.json").version;
 
 const generatePdf = async () => {
-  const puppeteerVersion = info.version;
   const resultPath = path.resolve(os.tmpdir(), `result-${puppeteerVersion}-${+new Date()}.pdf`);
 
   performance.mark("browser-launch-start");
