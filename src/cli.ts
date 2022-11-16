@@ -10,6 +10,7 @@ import "./rewiremock";
 import { aggregateResults, printResultsTable, testPuppeteerCase } from "./index";
 import { usePuppeteerVersion } from "./rewiremock";
 import { RunOptions, TestCasePerformanceResultItem, TestOptions } from "./types";
+import { prepareVersions } from "./prepare-versions";
 
 const myParseInt = (value: string): number => {
   const parsedValue = parseInt(value, 10);
@@ -29,7 +30,7 @@ program
   .option("--puppeteer-versions <string...>", "comma-separated list of puppeteer versions", ["latest"])
   .option("--out <filePath>", "write json results to file")
   .action(async (casePath, args: TestOptions & RunOptions) => {
-    console.log(args);
+    // console.log(args);
     const testResults: TestCasePerformanceResultItem[][] = [];
 
     for (const puppeteerVersion of args.puppeteerVersions) {
@@ -52,7 +53,8 @@ program
   .argument("<versions...>", "versions")
   .description("load versions of puppeteer")
   .action(async (versions) => {
-    console.log("prepare", { versions });
+    await prepareVersions(versions);
+    console.log("Versions prepared:", versions.join(", "));
   });
 
 program.parse();
