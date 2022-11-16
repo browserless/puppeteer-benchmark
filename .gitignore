@@ -109,3 +109,4 @@ build
 # Other 
 sandbox.ts
 puppeteer-versions.json
+results.json
