@@ -1,27 +1,9 @@
 import path from "path";
 import { performance, PerformanceObserver } from "perf_hooks";
 
-export interface TestOptions {
-  retriesNumber: number;
-  version: string;
-}
+import * as mathjs from "mathjs";
 
-export interface RunOptions {
-  puppeteerVersions: string[];
-}
-
-export interface ExecutionDetails {
-  functionName: string;
-  puppeteerVersion: string;
-  chromeVersion: string;
-  retryNumber: number;
-  casePath: string;
-}
-
-export interface TestCasePerformanceResultItem {
-  details: ExecutionDetails;
-  item: PerformanceEntry;
-}
+import { TestOptions, TestCasePerformanceResultItem, ExecutionDetails, AggregatedResultItem } from "./types";
 
 const _requireUncached = (module: string) => {
   delete require.cache[require.resolve(module)];
@@ -90,4 +72,70 @@ export const testPuppeteerCase = async (
   }
 
   return measures;
+};
+
+/**
+ * Convert raw measurement items to grouped data
+ */
+export const aggregateResults = (resultItems: TestCasePerformanceResultItem[]): AggregatedResultItem[] => {
+  const testedFunctions = new Set<string>();
+  const puppeteerVersions = new Set<string>();
+  const reportedMeasures = new Set<string>();
+
+  resultItems.forEach((item) => {
+    testedFunctions.add(item.details.functionName);
+    puppeteerVersions.add(item.details.puppeteerVersion);
+    reportedMeasures.add(item.item.name);
+  });
+
+  return Array.from(testedFunctions)
+    .map((fnName) => {
+      return Array.from(reportedMeasures).map((measureName) => {
+        return Array.from(puppeteerVersions).reduce<AggregatedResultItem>(
+          (acc, puppeteerVersion) => {
+            const relatedRunResults = resultItems.filter((item) => {
+              return (
+                item.item.name === measureName &&
+                item.details.functionName === fnName &&
+                item.details.puppeteerVersion === puppeteerVersion
+              );
+            });
+
+            const relatedDurations = relatedRunResults.map((_) => _.item.duration);
+
+            acc.measuresNum = relatedDurations.length;
+
+            acc.resultsByVersion[puppeteerVersion] = {
+              avg: mathjs.mean(relatedDurations),
+              min: mathjs.min(relatedDurations),
+              max: mathjs.max(relatedDurations),
+              stddev: mathjs.std(...relatedDurations),
+            };
+
+            return acc;
+          },
+          { functionName: fnName, measureName, measuresNum: 0, resultsByVersion: {} },
+        );
+      });
+    })
+    .flat()
+    .filter((_) => _.measuresNum > 0);
+};
+
+/**
+ * Simplify results structure and print table to console
+ */
+export const printResultsTable = (resultItems: AggregatedResultItem[]): void => {
+  console.table(
+    resultItems.map((item) => {
+      const { resultsByVersion, measuresNum, ...others } = item;
+      return Object.entries(resultsByVersion).reduce(
+        (acc, [version, r]) => {
+          acc[version] = parseFloat(r.avg.toFixed(2));
+          return acc;
+        },
+        { ...others } as any,
+      );
+    }),
+  );
 };
