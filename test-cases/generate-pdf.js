@@ -18,9 +18,13 @@ const generatePdf = async (url = "http://example.com/") => {
 
   await page.goto(url);
 
+  performance.mark("pdf-start");
   await page.pdf({
     path: resultPath,
   });
+  performance.mark("pdf-finish");
+
+  performance.measure("pdf-generation", "pdf-start", "pdf-finish");
 
   console.log("Saved pdf to", resultPath);
 
