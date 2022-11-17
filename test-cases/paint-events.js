@@ -28,11 +28,19 @@ const paintEvents = async (url = "http://example.com/", options = {
 
   const navigationEvent = allPerformanceEntries.find((x) => x.entryType === "navigation");
   const fcp = allPerformanceEntries.find((x) => x.name === "first-contentful-paint");
+  const fp = allPerformanceEntries.find((x) => x.name === "first-paint");
 
   if (navigationEvent) {
     performance.measure('time-to-first-byte', {
       start: 0,
       end: navigationEvent.responseStart ?? 0
+    })
+  }
+  
+  if (fp) {
+    performance.measure('first-paint', {
+      start: 0,
+      end: fp.startTime
     })
   }
 
