@@ -26,14 +26,14 @@ const generalTesting = async (url = "http://example.com/") => {
 
   console.log("Saved screenshot to", screenshotPath);
 
-  performance.mark('browser-close-start')
+  performance.mark("browser-close-start");
   await browser.close();
-  performance.mark('browser-close-finish')
+  performance.mark("browser-close-finish");
 
   performance.measure("browser-launch", "browser-launch-start", "browser-launch-finish");
   performance.measure("navigation", "navigation-start", "navigation-finish");
   performance.measure("screenshot", "screenshot-start", "screenshot-finish");
-  performance.measure('browser-close', 'browser-close-start', 'browser-close-finish')
+  performance.measure("browser-close", "browser-close-start", "browser-close-finish");
 };
 
 module.exports = generalTesting;
