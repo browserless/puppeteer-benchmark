@@ -61,8 +61,10 @@ program
   .argument("<versions...>", "versions")
   .description("load versions of puppeteer")
   .action(async (versions) => {
+    const spinner = ora().start("Loading puppeteer versions");
     await prepareVersions(versions);
-    console.log("Versions prepared:", versions.join(", "));
+    spinner.stop();
+    spinner.succeed("Versions prepared: " + versions.join(", "));
   });
 
 program.parse();
