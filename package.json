@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "commander": "^9.4.1",
-    "mathjs": "^11.3.3"
+    "mathjs": "^11.3.3",
+    "ora": "^5.4.1"
   },
   "devDependencies": {
     "lint-staged": "^13.0.3",

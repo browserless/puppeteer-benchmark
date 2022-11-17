@@ -5,6 +5,7 @@ import path from "path";
 
 import { program } from "commander";
 import commander from "commander";
+import ora from "ora";
 
 import "./rewiremock";
 import { aggregateResults, printResultsTable, testPuppeteerCase } from "./index";
@@ -34,12 +35,16 @@ program
   })
   .option("--out <filePath>", "write json results to file")
   .action(async (casePath, args: TestOptions & CommandOptions) => {
+    const spinner = ora().info("Started testing");
     const testResults: TestCasePerformanceResultItem[][] = [];
 
     for (const puppeteerVersion of args.puppeteerVersions) {
       usePuppeteerVersion(puppeteerVersion);
       const result = await testPuppeteerCase(casePath, args);
+
       testResults.push(result.measures);
+
+      spinner.succeed(`Finished testing ${casePath} with puppeteer version: ${puppeteerVersion}`);
     }
 
     const output = aggregateResults(testResults.flat());
