@@ -38,6 +38,11 @@ const paintEvents = async (
       start: 0,
       end: navigationEvent.responseStart ?? 0,
     });
+
+    performance.measure("dom-content-loaded", {
+      start: 0,
+      end: navigationEvent.domContentLoadedEventEnd,
+    });
   }
 
   if (fp) {
