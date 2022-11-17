@@ -13,7 +13,9 @@ const _requireUncached = (module: string) => {
 export const testPuppeteerCase = async (
   casePath: string,
   options: TestOptions,
-): Promise<TestCasePerformanceResultItem[]> => {
+): Promise<{
+  measures: TestCasePerformanceResultItem[];
+}> => {
   const testCase = path.resolve(casePath);
   const testCaseFunction = _requireUncached(testCase);
 
@@ -58,7 +60,7 @@ export const testPuppeteerCase = async (
     });
 
     performance.mark(`execution-start`);
-    await testCaseFunction();
+    await testCaseFunction(options.caseUrl, options.caseOpts);
     performance.mark(`execution-finish`);
 
     performance.measure("total", "execution-start", "execution-finish");
@@ -71,7 +73,7 @@ export const testPuppeteerCase = async (
     performanceObserver.disconnect();
   }
 
-  return measures;
+  return { measures };
 };
 
 /**

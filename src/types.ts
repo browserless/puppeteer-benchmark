@@ -1,9 +1,12 @@
-export type TestOptions = {
-  retriesNumber: number;
-  version: string;
-};
+export interface TestOptions<T = any> {
+  /** Argument that will be passed to case function */
+  caseUrl?: string;
+  caseOpts?: T;
 
-export type RunOptions = {
+  retriesNumber: number;
+}
+
+export type CommandOptions = {
   puppeteerVersions: string[];
   out: string;
 };

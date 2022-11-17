@@ -9,7 +9,7 @@ import commander from "commander";
 import "./rewiremock";
 import { aggregateResults, printResultsTable, testPuppeteerCase } from "./index";
 import { usePuppeteerVersion } from "./rewiremock";
-import { RunOptions, TestCasePerformanceResultItem, TestOptions } from "./types";
+import { CommandOptions, TestCasePerformanceResultItem, TestOptions } from "./types";
 import { prepareVersions } from "./prepare-versions";
 
 const myParseInt = (value: string): number => {
@@ -28,15 +28,18 @@ program
   .description("run puppeteer case")
   .option("-r, --retries-number <number>", "number of test exectuions", myParseInt, 5)
   .option("--puppeteer-versions <string...>", "comma-separated list of puppeteer versions", ["latest"])
+  .option("--case-url <url>", "url parameter that will be passed to case function")
+  .option("--case-opts <caseOptions>", "additinal options for test case function", (value) => {
+    return JSON.parse(value);
+  })
   .option("--out <filePath>", "write json results to file")
-  .action(async (casePath, args: TestOptions & RunOptions) => {
-    // console.log(args);
+  .action(async (casePath, args: TestOptions & CommandOptions) => {
     const testResults: TestCasePerformanceResultItem[][] = [];
 
     for (const puppeteerVersion of args.puppeteerVersions) {
       usePuppeteerVersion(puppeteerVersion);
-      const measures = await testPuppeteerCase(casePath, args);
-      testResults.push(measures);
+      const result = await testPuppeteerCase(casePath, args);
+      testResults.push(result.measures);
     }
 
     const output = aggregateResults(testResults.flat());
