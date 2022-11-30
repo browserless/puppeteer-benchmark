@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "bin": {
-    "puppeteer-test": "./build/cli.js"
+    "puppeteer-test": "dotenv/config ./build/cli.js"
   },
   "main": "build",
   "scripts": {
@@ -12,10 +12,17 @@
     "make-puppeteer-placeholder": "node ./build/helpers/make-puppeteer-placeholder.js",
     "postinstall": "npm run build && npm run make-puppeteer-placeholder",
     "prepare": "npx simple-git-hooks",
+    "prepare-suite": "npm run build && npm link && node ./build/cli.js prepare-suite",
+    "suite": "npm run build && npm link && node ./build/cli.js suite",
     "watch": "ts-node-dev --transpile-only"
   },
   "dependencies": {
+    "@types/lodash.difference": "^4.5.7",
+    "@types/lodash.range": "^3.2.7",
     "commander": "^9.4.1",
+    "dotenv": "^16.0.3",
+    "lodash.difference": "^4.5.0",
+    "lodash.range": "^3.2.0",
     "mathjs": "^11.3.3",
     "ora": "^5.4.1"
   },

@@ -4,6 +4,7 @@ import { performance, PerformanceObserver } from "perf_hooks";
 import * as mathjs from "mathjs";
 
 import { TestOptions, TestCasePerformanceResultItem, ExecutionDetails, AggregatedResultItem } from "./types";
+import { simplifyResults } from "./utils";
 
 const _requireUncached = (module: string) => {
   delete require.cache[require.resolve(module)];
@@ -116,7 +117,12 @@ export const aggregateResults = (resultItems: TestCasePerformanceResultItem[]): 
 
             return acc;
           },
-          { functionName: fnName, measureName, measuresNum: 0, resultsByVersion: {} },
+          {
+            functionName: fnName,
+            measureName,
+            measuresNum: 0,
+            resultsByVersion: {},
+          },
         );
       });
     })
@@ -128,16 +134,5 @@ export const aggregateResults = (resultItems: TestCasePerformanceResultItem[]): 
  * Simplify results structure and print table to console
  */
 export const printResultsTable = (resultItems: AggregatedResultItem[]): void => {
-  console.table(
-    resultItems.map((item) => {
-      const { resultsByVersion, measuresNum, ...others } = item;
-      return Object.entries(resultsByVersion).reduce(
-        (acc, [version, r]) => {
-          acc[version] = parseFloat(r.avg.toFixed(2));
-          return acc;
-        },
-        { ...others } as any,
-      );
-    }),
-  );
+  console.table(simplifyResults(resultItems));
 };

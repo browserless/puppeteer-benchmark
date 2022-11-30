@@ -2,6 +2,7 @@ export interface TestOptions<T = any> {
   /** Argument that will be passed to case function */
   caseUrl?: string;
   caseOpts?: T;
+  printTable?: boolean;
 
   retriesNumber: number;
 }
