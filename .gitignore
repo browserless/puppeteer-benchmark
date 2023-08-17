@@ -1,5 +1,7 @@
 versions
 results*.html
+reports/results*.html
+cache
 
 # Logs
 logs

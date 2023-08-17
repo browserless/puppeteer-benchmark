@@ -4,8 +4,8 @@
         "outDir": "./build",
 
         "target": "ES2019",
-        "module": "commonjs",  
-        "strict": true, 
+        "module": "commonjs",
+        "strict": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,
 
