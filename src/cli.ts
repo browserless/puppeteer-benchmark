@@ -31,6 +31,7 @@ import {
 	readJSON,
 	sleep,
 	tempJSON,
+	waitForFile,
 } from "./utils";
 
 const myParseInt = (value: string): number => {
@@ -69,7 +70,7 @@ const runTest = async (
 	const output = aggregateResults(testResults.flat());
 
 	if (args.out) {
-		await fs.writeFile(tempJSON(), JSON.stringify(output, null, 2));
+		await fs.writeFile(args.out, JSON.stringify(output, null, 2));
 	}
 
 	if (args.printTable) printResultsTable(output);
@@ -79,14 +80,15 @@ const runTest = async (
 
 const runAll = async (args: TestOptions & CommandOptions) => {
 	if (!args.out) args.out = tempJSON();
+	console.log("Using temp JSON " + args.out);
 
 	const benchmarks = [];
 
 	for (const test of tests) {
 		const file = args.out;
 		await runTest(getTestModulePath(test), args);
-
-		await sleep(2000); // bad practice
+		console.log("Waiting for file " + file);
+		await waitForFile(file);
 		const results = await readJSON(file);
 		benchmarks.push(...results);
 	}
@@ -173,8 +175,7 @@ program
 				highlightHtml: true,
 				printTable: false,
 			});
-
-			await sleep(2000); // bad practice
+			await waitForFile(file);
 			const results = await readJSON(file);
 			benchmarks.push(...results);
 		}
