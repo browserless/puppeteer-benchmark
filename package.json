@@ -11,6 +11,7 @@
     "cli": "node ./build/cli.js",
     "make-puppeteer-placeholder": "node ./build/helpers/make-puppeteer-placeholder.js",
     "postinstall": "npm run build && npm run make-puppeteer-placeholder",
+    "prettier": "prettier --config .prettierrc --write --loglevel error \"{src,test-cases}/**/*.{js,ts}\"",
     "prepare": "npx simple-git-hooks",
     "prepare-suite": "npm run build && npm link && node ./build/cli.js prepare-suite",
     "suite": "npm run build && npm link && node ./build/cli.js suite",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "lint-staged": "^13.0.3",
+    "prettier": "^3.0.2",
     "rewiremock": "^3.14.4",
     "rome": "^10.0.1",
     "simple-git-hooks": "^2.8.1",
