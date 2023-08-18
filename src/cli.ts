@@ -53,8 +53,11 @@ const runTest = async (
 	casePath: string,
 	args: TestOptions & CommandOptions,
 ) => {
-	const spinner = ora().info("Started testing");
 	const testResults: TestCasePerformanceResultItem[][] = [];
+	let spinner;
+
+	if (!args.silent)
+		spinner = ora().info("Started testing " + path.basename(casePath));
 
 	for (const puppeteerVersion of args.puppeteerVersions) {
 		usePuppeteerVersion(puppeteerVersion);
@@ -62,9 +65,10 @@ const runTest = async (
 
 		testResults.push(result.measures);
 
-		spinner.succeed(
-			`Finished testing ${casePath} with puppeteer version: ${puppeteerVersion}`,
-		);
+		if (!args.silent && spinner)
+			spinner.succeed(
+				`Finished testing ${casePath} with puppeteer version: ${puppeteerVersion}`,
+			);
 	}
 
 	const output = aggregateResults(testResults.flat());
@@ -80,14 +84,12 @@ const runTest = async (
 
 const runAll = async (args: TestOptions & CommandOptions) => {
 	if (!args.out) args.out = tempJSON();
-	console.log("Using temp JSON " + args.out);
 
 	const benchmarks = [];
 
 	for (const test of tests) {
 		const file = args.out;
 		await runTest(getTestModulePath(test), args);
-		console.log("Waiting for file " + file);
 		await waitForFile(file);
 		const results = await readJSON(file);
 		benchmarks.push(...results);
@@ -116,6 +118,7 @@ program
 		"--case-url <url>",
 		"url parameter that will be passed to case function",
 	)
+	.option("--silent", "turn console output off")
 	.option("--generate-report", "export results as an HTML report")
 	.option("--highlight-html", "highlight min and max values in html report")
 	.option("--report-dir <reportDir>", "write the final HTML repor to directory")
@@ -127,7 +130,9 @@ program
 	.action(async (casePath: string, args: TestOptions & CommandOptions) => {
 		if (args.tempDir) process.env.PPTR_BENCHMARK_TEMP_DIR = args.tempDir;
 		if (args.reportDir) process.env.PPTR_BENCHMARK_REPORT_DIR = args.reportDir;
-		if (args.outPath) process.env.PPTR_BENCHMARK_OUT_PATH = args.reportDir;
+		if (args.outPath) process.env.PPTR_BENCHMARK_OUT_PATH = args.outPath;
+		if (args.silent)
+			process.env.PPTR_BENCHMARK_SILENT = JSON.stringify(args.silent);
 
 		let results;
 

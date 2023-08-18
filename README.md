@@ -26,6 +26,7 @@ Tests are simple async functions that make use of the `perf_hooks` library to ca
         * [--generate-report](#--generate-report)
         * [--highlight-html](#--highlight-html)
         * [--report-dir \<reportDir\>](#--report-dir-reportdir)
+        * [--silent](#--silent)
     + [prepare \<versions...\>](#prepare-versions)
     + [prepare-suite](#prepare-suite)
     + [suite](#suite)
@@ -162,6 +163,15 @@ npx pptr-benchmark run all --puppeteer-versions 16 18 latest --generate-report -
 And generates the following report:
 
 ![Basic HTML Report](./docs/html-highlight.jpg)
+
+##### --silent
+
+Turns off console output
+
+```sh
+# Will only print the results table
+npx pptr-benchmark run all --silent
+```
 
 ### prepare \<versions...\>
 

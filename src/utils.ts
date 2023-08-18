@@ -150,12 +150,10 @@ export const waitForFile = async (
 	timeout = 5000,
 	interval = 500,
 ): Promise<void> => {
-	console.log("Checking if file exists " + filePath);
 	if (fs.existsSync(filePath)) return;
 	if (currentTime >= timeout)
 		throw new Error("Error waiting for file to be written! File timed out.");
 
-	console.log("Sleeping");
 	await sleep(interval);
 	return waitForFile(filePath, currentTime + interval, timeout);
 };

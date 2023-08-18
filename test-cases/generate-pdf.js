@@ -13,6 +13,8 @@ const getFilesize = (filename) => {
 };
 
 const generatePdf = async (url = "http://example.com/") => {
+	const silent = JSON.parse(process.env.PPTR_BENCHMARK_SILENT ?? "false");
+
 	const resultPath = path.resolve(
 		process.env.PPTR_BENCHMARK_TEMP_DIR || os.tmpdir(),
 		`result-${puppeteerVersion}-${+new Date()}.pdf`,
@@ -58,7 +60,7 @@ const generatePdf = async (url = "http://example.com/") => {
 		end: "pdf-finish",
 	});
 
-	console.log("Saved pdf to", resultPath);
+	if (!silent) console.log("Saved pdf to", resultPath);
 
 	await browser.close();
 };

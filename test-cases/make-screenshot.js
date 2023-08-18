@@ -6,6 +6,8 @@ const puppeteer = require("puppeteer");
 const puppeteerVersion = require("puppeteer/package.json").version;
 
 const generalTesting = async (url = "http://example.com/") => {
+	const silent = JSON.parse(process.env.PPTR_BENCHMARK_SILENT ?? "false");
+
 	const screenshotPath = path.resolve(
 		process.env.PPTR_BENCHMARK_TEMP_DIR || os.tmpdir(),
 		`result-${puppeteerVersion}-${+new Date()}.png`,
@@ -27,7 +29,7 @@ const generalTesting = async (url = "http://example.com/") => {
 	});
 	performance.mark("screenshot-finish");
 
-	console.log("Saved screenshot to", screenshotPath);
+	if (!silent) console.log("Saved screenshot to", screenshotPath);
 
 	performance.mark("browser-close-start");
 	await browser.close();

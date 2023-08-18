@@ -4,6 +4,7 @@ export interface TestOptions<T = any> {
 	caseOpts?: T;
 	printTable?: boolean;
 	tempDir?: string;
+	silent?: boolean;
 
 	retriesNumber: number;
 }
