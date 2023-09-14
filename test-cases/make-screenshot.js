@@ -6,34 +6,47 @@ const puppeteer = require("puppeteer");
 const puppeteerVersion = require("puppeteer/package.json").version;
 
 const generalTesting = async (url = "http://example.com/") => {
-  const screenshotPath = path.resolve(os.tmpdir(), `result-${puppeteerVersion}-${+new Date()}.png`);
+	const silent = JSON.parse(process.env.PPTR_BENCHMARK_SILENT ?? "false");
 
-  performance.mark("browser-launch-start");
-  const browser = await puppeteer.launch();
-  performance.mark("browser-launch-finish");
+	const screenshotPath = path.resolve(
+		process.env.PPTR_BENCHMARK_TEMP_DIR || os.tmpdir(),
+		`result-${puppeteerVersion}-${+new Date()}.png`,
+	);
 
-  const page = await browser.newPage();
+	performance.mark("browser-launch-start");
+	const browser = await puppeteer.launch();
+	performance.mark("browser-launch-finish");
 
-  performance.mark("navigation-start");
-  await page.goto(url);
-  performance.mark("navigation-finish");
+	const page = await browser.newPage();
 
-  performance.mark("screenshot-start");
-  await page.screenshot({
-    path: screenshotPath,
-  });
-  performance.mark("screenshot-finish");
+	performance.mark("navigation-start");
+	await page.goto(url);
+	performance.mark("navigation-finish");
 
-  console.log("Saved screenshot to", screenshotPath);
+	performance.mark("screenshot-start");
+	await page.screenshot({
+		path: screenshotPath,
+	});
+	performance.mark("screenshot-finish");
 
-  performance.mark("browser-close-start");
-  await browser.close();
-  performance.mark("browser-close-finish");
+	if (!silent) console.log("Saved screenshot to", screenshotPath);
 
-  performance.measure("browser-launch", "browser-launch-start", "browser-launch-finish");
-  performance.measure("navigation", "navigation-start", "navigation-finish");
-  performance.measure("screenshot", "screenshot-start", "screenshot-finish");
-  performance.measure("browser-close", "browser-close-start", "browser-close-finish");
+	performance.mark("browser-close-start");
+	await browser.close();
+	performance.mark("browser-close-finish");
+
+	performance.measure(
+		"browser-launch",
+		"browser-launch-start",
+		"browser-launch-finish",
+	);
+	performance.measure("navigation", "navigation-start", "navigation-finish");
+	performance.measure("screenshot", "screenshot-start", "screenshot-finish");
+	performance.measure(
+		"browser-close",
+		"browser-close-start",
+		"browser-close-finish",
+	);
 };
 
 module.exports = generalTesting;

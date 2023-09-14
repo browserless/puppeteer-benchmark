@@ -1,16 +1,17 @@
 {
-  "name": "puppeteer-test-tool",
-  "version": "1.0.0",
-  "description": "",
+  "name": "puppeteer-benchmark",
+  "version": "1.1.0",
+  "description": "A Node utility for comparing performance among puppeteer versions",
   "bin": {
-    "puppeteer-test": "dotenv/config ./build/cli.js"
+    "pptr-benchmark": "dotenv/config ./build/cli.js"
   },
-  "main": "build",
+  "main": "./build/cli.js",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "cli": "node ./build/cli.js",
     "make-puppeteer-placeholder": "node ./build/helpers/make-puppeteer-placeholder.js",
     "postinstall": "npm run build && npm run make-puppeteer-placeholder",
+    "prettier": "prettier --config .prettierrc --write --log-level error \"{src,test-cases}/**/*.{js,ts}\"",
     "prepare": "npx simple-git-hooks",
     "prepare-suite": "npm run build && npm link && node ./build/cli.js prepare-suite",
     "suite": "npm run build && npm link && node ./build/cli.js suite",
@@ -23,11 +24,14 @@
     "dotenv": "^16.0.3",
     "lodash.difference": "^4.5.0",
     "lodash.range": "^3.2.0",
+    "lodash.startcase": "^4.4.0",
     "mathjs": "^11.3.3",
-    "ora": "^5.4.1"
+    "ora": "^5.4.1",
+    "pidusage": "^3.0.2"
   },
   "devDependencies": {
     "lint-staged": "^13.0.3",
+    "prettier": "^3.0.2",
     "rewiremock": "^3.14.4",
     "rome": "^10.0.1",
     "simple-git-hooks": "^2.8.1",
